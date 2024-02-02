@@ -12,6 +12,10 @@ type Mux interface {
 	ServeHTTP(http.ResponseWriter, *http.Request)
 }
 
+func NewBuilder(mux Mux) *Builder {
+	return &Builder{mux, []Middleware{}}
+}
+
 type Builder struct {
 	mux         Mux
 	middlewares []Middleware
