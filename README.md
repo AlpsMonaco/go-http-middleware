@@ -78,6 +78,48 @@ the console will output
 2024/02/02 14:00:54 log middleware 1 out
 ```
 
+
+# Middleware Practice
+
+## Logger Middleware
+log client addr and request path.
+```go
+func LogMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Printf("%s %s\n", r.RemoteAddr, r.RequestURI)
+		next(w, r)
+	}
+}
+```
+
+## Timer Middleware
+```go
+func TimerMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		st := time.Now()
+		next(w, r)
+		fmt.Printf("time elapsed:%d\n",time.Now().Sub(st).Milliseconds())
+	}
+}
+```
+
+## Recovery Middleware
+recover if panic
+```go
+func RecoverMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		defer func() {
+			err := recover()
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Println(err)
+			}
+		}()
+		next(w, r)
+	}
+}
+```
+
 # Advance
 Use `middleware.NewBuilder` if you use your own mux instead of default mux of net/http.
 
