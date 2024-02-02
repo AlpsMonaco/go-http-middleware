@@ -1,7 +1,11 @@
 # go-http-middleware
 A middleware library for go standard net/http library.  
-Simply add two line of code for middleware intergration of net/http.  
-Fully compatible with the net/http library
+
+# Features
+* no more third party library requires.
+* core code are easy to learn and understand.
+* fully compatible with the `net/http` library
+
 
 # Quick Start
 ```go
@@ -71,12 +75,6 @@ the console will output
 2024/02/02 14:00:54 log middleware 2 out
 2024/02/02 14:00:54 log middleware 1 out
 ```
-
-# Features
-* no more third party library requires.
-* core code are easy to learn and understand.
-* fully compatible with the `net/http` library
-
 
 # Advance
 Use `middleware.NewBuilder` if you use your own mux instead of default mux of net/http.
