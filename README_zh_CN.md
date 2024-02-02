@@ -1,5 +1,6 @@
 # go-http-middleware
 一个用于go的`net/http`标准库的中间件库  
+为`net/http`库提供便捷的中间库集成方案  
 
 # Features
 * 不需要依赖其他第三方库
