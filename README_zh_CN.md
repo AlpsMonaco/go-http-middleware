@@ -77,6 +77,46 @@ curl http://127.0.0.1:33333/hello
 2024/02/02 14:00:54 log middleware 1 out
 ```
 
+# 实用中间件
+## 日志
+记录地址和路径
+```go
+func LogMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Printf("%s %s\n", r.RemoteAddr, r.RequestURI)
+		next(w, r)
+	}
+}
+```
+
+## 计时器
+```go
+func TimerMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		st := time.Now()
+		next(w, r)
+		fmt.Printf("time elapsed:%d\nms",time.Now().Sub(st).Milliseconds())
+	}
+}
+```
+
+## recover中间件
+recover if panic
+```go
+func RecoverMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		defer func() {
+			err := recover()
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Println(err)
+			}
+		}()
+		next(w, r)
+	}
+}
+```
+
 # 进阶
 如果你使用了自定义的 mux , 请使用`middleware.NewBuilder`
 
