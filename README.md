@@ -98,7 +98,7 @@ func TimerMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		st := time.Now()
 		next(w, r)
-		fmt.Printf("time elapsed:%d\n",time.Now().Sub(st).Milliseconds())
+		fmt.Printf("time elapsed:%d\nms",time.Now().Sub(st).Milliseconds())
 	}
 }
 ```

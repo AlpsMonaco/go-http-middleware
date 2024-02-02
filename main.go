@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/AlpsMonaco/go-http-middleware/middleware"
 )
@@ -18,6 +19,10 @@ func HttpHandleHello(w http.ResponseWriter, r *http.Request) {
 func HttpHandleWorld(w http.ResponseWriter, r *http.Request) {
 	logger.Println("World")
 	w.Write([]byte("World"))
+}
+
+func HttpHandlePanic(w http.ResponseWriter, r *http.Request) {
+	panic("panic when access /panic")
 }
 
 func LogMiddleware1(next http.HandlerFunc) http.HandlerFunc {
@@ -36,14 +41,38 @@ func LogMiddleware2(next http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-func main() {
-	b := middleware.NewBuilder(&http.ServeMux{})
-	b.With(LogMiddleware1, LogMiddleware2)
-	b.HandleFunc("/hello", HttpHandleHello)
-	b.ListenAndServe(":33333", nil)
+func RecoverMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		defer func() {
+			err := recover()
+			if err != nil {
+				w.WriteHeader(500)
+				logger.Println(err)
+			}
+		}()
+		next(w, r)
+	}
+}
 
+func TimerMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		st := time.Now()
+		next(w, r)
+		logger.Printf("time elapsed:%dms\n", time.Now().Sub(st).Milliseconds())
+	}
+}
+
+func LogMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		logger.Printf("%s %s\n", r.RemoteAddr, r.RequestURI)
+		next(w, r)
+	}
+}
+
+func main() {
 	http := middleware.DefaultHTTPBuilder()
-	http.With(LogMiddleware1, LogMiddleware2)
+	http.With(TimerMiddleware, RecoverMiddleware, LogMiddleware, LogMiddleware1, LogMiddleware2)
+	http.HandleFunc("/panic", HttpHandlePanic)
 	http.HandleFunc("/hello", HttpHandleHello)
 	http.HandleFunc("/world", HttpHandleWorld)
 	http.ListenAndServe(":33333", nil)
