@@ -4,7 +4,7 @@
 A middleware library for go standard net/http library.  
 
 # Features
-* no more third party library requires.
+* no more third-party libraries required.
 * core code are easy to learn and understand.
 * fully compatible with the `net/http` library
 
