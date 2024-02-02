@@ -1,5 +1,7 @@
 # go-http-middleware
-A middleware library for go standard net/http library.Simply add two line of code for middleware intergrated of net/http.
+A middleware library for go standard net/http library.  
+Simply add two line of code for middleware intergration of net/http.  
+Fully compatible with the net/http library
 
 # Quick Start
 ```go
@@ -50,7 +52,7 @@ func main() {
 }
 
 ```
-Add the following two lines of code before registering the HTTP handler in your code.  
+Write your own middleware and add the following two lines of code before registering the HTTP handler in your code.  
 ```go
 http := middleware.DefaultHTTPBuilder()
 http.With(LogMiddleware1, LogMiddleware2)
